@@ -1,0 +1,2 @@
+# SynchronizationField
+Initial state
