@@ -3,13 +3,13 @@ class InitialFieldToFormFieldsController < ApplicationController
   before_action :get_fields
 
   def receive
-    Sequelable.create_field(@fields_sets)
+    CreateFormFieldsJob.perform_now(FormTableName.table_name, @fields_sets)
   end
 
   private
 
   def get_fields
-    @fields_sets = request.request_parameters["form"]["fields"]
+    @fields_sets = request.request_parameters[:form][:fields]
   end
 
 end

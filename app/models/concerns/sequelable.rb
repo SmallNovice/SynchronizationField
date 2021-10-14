@@ -1,11 +1,12 @@
 module Sequelable
   extend ActiveSupport::Concern
 
-  def self.create_field(fields = {})
-    db_connect.alter_table :initial_field_to_form_fields do
+  def self.create_field(table_name, fields = {})
+    db_connect.alter_table table_name do
       fields.each do |k|
-        if (InitialFieldToFormField.column_names & [k["identity_key"]]).blank?
-          add_column :"#{k["identity_key"]}", String
+        binding.pry
+        if (InitialFieldToFormField.column_names & [k[:identity_key]]).blank?
+          add_column :"#{k[:identity_key]}", String
         end
       end
     end
