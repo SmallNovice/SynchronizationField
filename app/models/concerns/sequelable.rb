@@ -4,7 +4,6 @@ module Sequelable
   def self.create_field(table_name, fields = {})
     db_connect.alter_table table_name do
       fields.each do |k|
-        binding.pry
         if (InitialFieldToFormField.column_names & [k[:identity_key]]).blank?
           add_column :"#{k[:identity_key]}", String
         end
