@@ -26,7 +26,7 @@ module Sequelable
     end
   end
 
-  def self.updata_fields(table_name, fields = {})
+  def self.update_fields(table_name, fields = {})
     return unless table_exists?(table_name)
 
     db_connect.alter_table table_name do
