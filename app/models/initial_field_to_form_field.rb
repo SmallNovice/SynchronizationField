@@ -1,0 +1,3 @@
+class InitialFieldToFormField < ApplicationRecord
+
+end
