@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  post  '/receive',  to: 'initial_field_to_form_fields#receive'
 end
