@@ -22,6 +22,16 @@ gem 'jbuilder', '~> 2.7'
 # Use Active Model has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
+gem 'pry', '~> 0.13.1'
+gem 'mime-types'
+gem 'netrc'
+gem 'http-accept'
+gem 'http-cookie'
+gem 'rest-client'
+gem 'jwt'
+gem 'pry-byebug'
+gem 'sequel'
+gem 'sidekiq'
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
 
