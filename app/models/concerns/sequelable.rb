@@ -14,10 +14,10 @@ module Sequelable
     end
   end
 
-  def self.create_field(table_name, fields = {}, ole_records_table_name)
+  def self.create_field(table_name, fields = {}, old_records_table_name)
     return unless table_exists?(table_name)
-    
-    table_fields = Sequelable.db_connect[ole_records_table_name].all.map { |field| field[:field_id] }
+
+    table_fields = Sequelable.db_connect[old_records_table_name].all.map { |field| field[:field_id] }
     Sequelable.db_connect.alter_table table_name do
       fields.each do |k|
 
@@ -28,13 +28,13 @@ module Sequelable
     end
   end
 
-  def self.update_fields(table_name, fields = {}, ole_records_table_name)
+  def self.update_fields(table_name, fields = {}, old_records_table_name)
     return unless table_exists?(table_name)
 
     db_connect.alter_table table_name do
       fields.each do |k|
-        unless Sequelable.db_connect[ole_records_table_name].where(field_id: k[:id]).all[0][:identity_key] == k[:identity_key]
-          rename_column Sequelable.db_connect[ole_records_table_name].where(field_id: k[:id]).all[0][:identity_key].to_sym, "#{k[:identity_key]}".to_sym
+        unless Sequelable.db_connect[old_records_table_name].where(field_id: k[:id]).all[0][:identity_key] == k[:identity_key]
+          rename_column Sequelable.db_connect[old_records_table_name].where(field_id: k[:id]).all[0][:identity_key].to_sym, "#{k[:identity_key]}".to_sym
         end
       end
     end
@@ -53,39 +53,47 @@ module Sequelable
     end
   end
 
-  def self.old_field_records(status, ole_records_table_name, fields = {})
-    create_ole_name_records(ole_records_table_name)
-    case status
-    when "create"
-      fields.each do |k|
-        if db_connect[ole_records_table_name].where(field_id: k[:id]).blank?
-          db_connect[ole_records_table_name].insert(field_id: k["id"], identity_key: "#{k["identity_key"]}")
-        else
-          unless db_connect[ole_records_table_name].where(field_id: k[:id]).all[0][:identity_key] == k[:identity_key]
-            db_connect[ole_records_table_name].insert(field_id: k["id"], identity_key: "#{k["identity_key"]}")
-          end
-        end
-      end
-    when "update"
-      fields.each do |k|
-        unless db_connect[ole_records_table_name].where(field_id: k[:id]).all[0][:identity_key].to_sym == k[:identity_key]
-          db_connect[ole_records_table_name].where(field_id: k['id']).update(identity_key: "#{k["identity_key"].to_s}")
-        end
-      end
-    when "delete"
-      table_fields = fields.map { |field| field['id'] }
-
-      db_connect[ole_records_table_name].all.each do |k|
-        next if table_fields.include?(k[:field_id])
-        db_connect[ole_records_table_name].where(field_id: k[:field_id]).delete
+  def self.old_field_records_create(old_records_table_name, fields = {})
+    fields.each do |k|
+      if db_connect[old_records_table_name].where(field_id: k[:id]).blank?
+        db_connect[old_records_table_name].insert(field_id: k["id"], identity_key: "#{k["identity_key"]}")
       end
     end
   end
 
-  def self.create_ole_name_records(ole_records_table_name)
-    return if table_exists?(ole_records_table_name)
+  def self.old_field_records_update(old_records_table_name, fields = {})
+    fields.each do |k|
+      unless db_connect[old_records_table_name].where(field_id: k[:id]).all[0][:identity_key].to_sym == k[:identity_key]
+        db_connect[old_records_table_name].where(field_id: k['id']).update(identity_key: "#{k["identity_key"].to_s}")
+      end
+    end
+  end
 
-    db_connect.create_table ole_records_table_name do
+  def self.old_field_records_delete(old_records_table_name, fields = {})
+    table_fields = fields.map { |field| field['id'] }
+
+    db_connect[old_records_table_name].all.each do |k|
+      next if table_fields.include?(k[:field_id])
+      db_connect[old_records_table_name].where(field_id: k[:field_id]).delete
+    end
+  end
+
+  def self.old_field_records(status, old_records_table_name, fields = {})
+    create_old_name_records(old_records_table_name)
+    case status
+    when :create
+      old_field_records_create(old_records_table_name, fields)
+    when :update
+      old_field_records_update(old_records_table_name, fields)
+    when :delete
+      old_field_records_delete(old_records_table_name, fields)
+    end
+  end
+
+  def self.create_old_name_records(old_records_table_name)
+    return if table_exists?(old_records_table_name)
+
+    db_connect.create_table old_records_table_name do
       primary_key :id
       Integer :field_id
       String :identity_key

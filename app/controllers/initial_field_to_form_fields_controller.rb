@@ -4,13 +4,13 @@ class InitialFieldToFormFieldsController < ApplicationController
 
   def receive
     form_table_name = FormTableName.table_name(params[:form][:namespace_id], params[:form][:id])
-    ole_records_table_name = FormTableName.ole_records_table_name(params[:form][:namespace_id], params[:form][:id])
+    old_records_table_name = FormTableName.ole_records_table_name(params[:form][:namespace_id], params[:form][:id])
     unless Sequelable.db_connect.table_exists?(form_table_name)
-      CreateFormTableJob.perform_now(form_table_name, @fields_sets, ole_records_table_name)
+      CreateFormTableJob.perform_later(form_table_name, @fields_sets, old_records_table_name)
     end
-    CreateFormFieldsJob.perform_now(form_table_name, @fields_sets, ole_records_table_name)
-    UpdateFormFieldsJob.perform_now(form_table_name, @fields_sets, ole_records_table_name)
-    DropFormFieldsJob.perform_now(form_table_name, @fields_sets, ole_records_table_name)
+    CreateFormFieldsJob.perform_later(form_table_name, @fields_sets, old_records_table_name)
+    UpdateFormFieldsJob.perform_later(form_table_name, @fields_sets, old_records_table_name)
+    DropFormFieldsJob.perform_later(form_table_name, @fields_sets, old_records_table_name)
   end
 
   private
