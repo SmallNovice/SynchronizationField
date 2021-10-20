@@ -18,11 +18,11 @@ module Sequelable
   def self.create_field(table_name, fields = {}, record_data_table_name)
     return unless table_exists?(table_name)
 
-    table_fields = Sequelable.db_connect[record_data_table_name].all.map { |field| field[:field_id] }
-    Sequelable.db_connect.alter_table table_name do
+    table_fields = @db[record_data_table_name].all.map { |field| field[:field_id] }
+    @db.alter_table table_name do
       fields.each do |field|
 
-        if (Sequelable.db_connect[table_name].columns & [:"#{field[:identity_key]}"]).blank? && (table_fields & ["#{field[:id]}".to_i]).blank?
+        if (@db[table_name].columns & [:"#{field[:identity_key]}"]).blank? && (table_fields & ["#{field[:id]}".to_i]).blank?
           add_column "#{field[:identity_key]}", String
         end
       end
@@ -35,8 +35,8 @@ module Sequelable
 
     db_connect.alter_table table_name do
       fields.each do |field|
-        unless Sequelable.db_connect[record_data_table_name].where(field_id: field[:id]).all[0][:identity_key] == field[:identity_key]
-          rename_column Sequelable.db_connect[record_data_table_name].where(field_id: field[:id]).all[0][:identity_key].to_sym, "#{field[:identity_key]}".to_sym
+        unless @db[record_data_table_name].where(field_id: field[:id]).all[0][:identity_key] == field[:identity_key]
+          rename_column @db[record_data_table_name].where(field_id: field[:id]).all[0][:identity_key].to_sym, "#{field[:identity_key]}".to_sym
         end
       end
     end
@@ -49,7 +49,7 @@ module Sequelable
     table_fields = fields.map { |field| field[:identity_key] }
 
     db_connect.alter_table table_name do
-      Sequelable.db_connect[table_name].columns.each do |database_columns_field|
+      @db[table_name].columns.each do |database_columns_field|
         next if table_fields.include?(database_columns_field.to_s) || database_columns_field == :id || database_columns_field == :created_at || database_columns_field == :updated_at
         drop_column database_columns_field
       end
@@ -103,8 +103,6 @@ module Sequelable
       String :identity_key
     end
   end
-
-  private
 
   def self.db_connect
     @db ||= Sequel.connect('sqlite://db/development.sqlite3')

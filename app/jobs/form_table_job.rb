@@ -1,4 +1,4 @@
-class FormUpdateJob < ApplicationJob
+class FormTableJob < ApplicationJob
   queue_as :default
 
   def perform(table_name, fields_sets, record_data_table_name)
