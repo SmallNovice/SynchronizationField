@@ -1,0 +1,3 @@
+class TableMapper < ApplicationRecord
+  
+end
