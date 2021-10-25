@@ -1,11 +1,8 @@
 class TableMapper
   class TableMapperUpdater < TableMapper
-    include FormTableName
     
-    def run(table_name, fields = {}, records)
-      
-      sequelable = Sequelable.new(table_name, fields, records)
-      
+    def run(sequelable)
+
       #创建表
       sequelable.create_form_table
       
@@ -14,7 +11,6 @@ class TableMapper
 
       #更新字段
       sequelable.update_fields
-
       #删除字段
       sequelable.drop_fields
     end
