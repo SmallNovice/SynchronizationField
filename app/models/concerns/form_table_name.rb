@@ -9,5 +9,4 @@ module FormTableName
       "form_#{namespace_id}_#{mapper_id}_table_name_records".to_sym
     end
   end
-
 end

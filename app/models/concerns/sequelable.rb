@@ -5,7 +5,7 @@ class Sequelable < ApplicationJob
     @@fields = fields
     @@records = records
   end
-  
+
   def create_form_table
     return if table_exists?(@@table_name)
 
@@ -13,7 +13,6 @@ class Sequelable < ApplicationJob
       primary_key :id
       DateTime :created_at
       DateTime :updated_at
-
       @@fields.each do |field|
         String "#{field[:identity_key]}"
       end
@@ -25,7 +24,6 @@ class Sequelable < ApplicationJob
     return unless table_exists?(@@table_name)
 
     table_fields = @db[@@records].all.map { |field| field[:field_id] }
-
     @db.alter_table @@table_name do
       @@fields.each do |field|
         if (@db[@@table_name].columns & [:"#{field[:identity_key]}"]).blank? && (table_fields & ["#{field[:id]}".to_i]).blank?
@@ -53,7 +51,6 @@ class Sequelable < ApplicationJob
     return unless table_exists?(@@table_name)
 
     table_fields = @@fields.map { |field| field[:identity_key] }
-
     db_connect.alter_table @@table_name do
       @db[@@table_name].columns.each do |database_columns_field|
         next if table_fields.include?(database_columns_field.to_s) || database_columns_field == :id || database_columns_field == :created_at || database_columns_field == :updated_at
@@ -101,7 +98,6 @@ class Sequelable < ApplicationJob
   end
 
   def create_records_table
-
     return if table_exists?(@@records)
 
     db_connect.create_table @@records do
