@@ -2,7 +2,6 @@ class TableMapper
   class TableMapperUpdater < TableMapper
     
     def run(sequelable)
-
       #创建表
       sequelable.create_form_table
       

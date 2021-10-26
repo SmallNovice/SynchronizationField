@@ -5,10 +5,10 @@ class TableMappersController < ApplicationController
   def receive
     case @table_mapper.action_type
     when 'updated'
-      MapperJob.perform_now(@table_mapper.id)
+      MapperJob.perform_later(@table_mapper.id)
       head :ok
     when 'destroyed'
-      MapperJob.perform_now(@table_mapper.id)
+      MapperJob.perform_later(@table_mapper.id)
       head :ok
     end
   end
