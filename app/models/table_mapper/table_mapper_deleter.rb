@@ -1,17 +1,8 @@
 class TableMapper
   class TableMapperDeleter < TableMapper
 
-    include FormTableName
-
-    def run(table_name, fields = {}, records)
-      sequelable = Sequelable.new(table_name, fields, records)
-      
+    def run(sequelable)
       sequelable.drop_table
-      
-    end
-    
-    def delete
-      TableMapper.find
     end
   end
 end

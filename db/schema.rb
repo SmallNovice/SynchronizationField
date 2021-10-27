@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_10_24_080056) do
+ActiveRecord::Schema.define(version: 2021_10_25_155956) do
 
   create_table "table_mappers", force: :cascade do |t|
     t.string "type"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 2021_10_24_080056) do
     t.datetime "updated_at", precision: 6, null: false
     t.integer "mapper_id"
     t.integer "namespace_id"
+    t.text "fields"
   end
 
 end
